@@ -37,31 +37,29 @@ const closeDatabase: Promise<void> = new Promise((resolve) =>
     db.close(() => resolve())
 )
 
-const main = () => {
-    loadDatabase
-        .then(fetchAllProperties)
-        .then((adapters) => adapters.map((adapter) => {
-            const collection = db.getCollection(adapter.config.name) || db.addCollection(adapter.config.name)
-            const existingApartments = collection.find({
-                id: {
-                    "$in": adapter.properties.map((apartment) => apartment.id)
-                },
-            }).map((apartment) => apartment.id)
+const main = () => loadDatabase
+    .then(fetchAllProperties)
+    .then((adapters) => adapters.map((adapter) => {
+        const collection = db.getCollection(adapter.config.name) || db.addCollection(adapter.config.name)
+        const existingApartments = collection.find({
+            id: {
+                "$in": adapter.properties.map((apartment) => apartment.id)
+            },
+        }).map((apartment) => apartment.id)
 
-            const newApartments = adapter.properties.filter((apartment) => existingApartments.find((ap) => ap === apartment.id) === undefined)
-            console.log(`Found ${newApartments.length} new apartments on ${adapter.config.name}`)
+        const newApartments = adapter.properties.filter((apartment) => existingApartments.find((ap) => ap === apartment.id) === undefined)
+        console.log(`Found ${newApartments.length} new apartments on ${adapter.config.name}`)
 
-            collection.startTransaction()
-            collection.insert(newApartments)
-            collection.commit()
-            db.save()
+        collection.startTransaction()
+        collection.insert(newApartments)
+        collection.commit()
+        db.save()
 
-            return {newProperties: newApartments, adapter: adapter.config}
-        }))
-        .then(postProperties)
-        .then(() => closeDatabase)
-        .then(() => delay(5_000))
-        .then(() => process.exit(0))
-}
+        return {newProperties: newApartments, adapter: adapter.config}
+    }))
+    .then(postProperties)
+    .then(() => closeDatabase)
+    .then(() => delay(5_000))
+    .then(() => process.exit(0))
 
 main()

@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@slack/web-api": "^6.8.1",
-    "@vercel/node": "^2.9.12",
     "axios": "^1.3.4",
     "dotenv": "^16.0.3",
     "lokijs": "^1.5.12",

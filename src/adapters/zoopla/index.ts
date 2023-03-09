@@ -1,10 +1,7 @@
 import Adapter from "../../types/adapter";
 import Config from "../../types/config";
-import * as playwright from 'playwright'
-import randomUserAgent from 'random-useragent'
 import {Listing} from "./listing";
 import Property from "../../types/property";
-import {BROWSER_CONTEXT} from "../../config/constants";
 
 const generateSearchUrl = (config: Config) => `https://www.zoopla.co.uk/to-rent/map/property/london/?beds_min=1&price_frequency=per_month&price_max=${config.maxPrice}&price_min=${config.minPrice}&q=London&radius=0&results_sort=newest_listings&search_source=to-rent&is_retirement_home=false&is_shared_accommodation=false&hidePoly=false&polyenc=gmcyH%60ei%40swJdbDuiDypBixGivHlD_yPliFcfDhxEmjFx%5BvEfjAz_Bnk%40x%60GfhBjeGvmCvn%40gAfgBra%40x%7DF`
 const featureToName = (feature: string) => {
