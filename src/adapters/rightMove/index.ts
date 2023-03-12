@@ -17,10 +17,9 @@ const mapListings: (listings: Array<Listing>) => Array<Property> = (listings) =>
         weekly: listing.price.displayPrices[1].displayPrice,
     },
     lastUpdated: listing.listingUpdate.listingUpdateDate.toString(),
-    messageLink: `https://www.rightmove.co.uk/${listing.contactUrl}`,
-    url: `https://www.rightmove.co.uk/${listing.propertyUrl}`
+    messageLink: `https://www.rightmove.co.uk${listing.contactUrl}`,
+    url: `https://www.rightmove.co.uk${listing.propertyUrl}`
 }))
-
 
 const runSearch = async (page: Page, config: Config): Promise<Array<Listing>> => {
     const fetchPage = (index: string) => {
