@@ -12,7 +12,7 @@ const adapters = [{
 }, {
     adapter: zooplaAdapter,
     config: Zoopla,
-    enabled: false
+    enabled: true
 }, {
     adapter: rightMoveAdapter,
     config: RightMove,
