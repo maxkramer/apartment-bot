@@ -1,16 +1,12 @@
-import {BROWSER_CONTEXT, DATABASE_NAME} from "./config/constants"
-import loki from 'lokijs'
-import {postProperties} from "./slack"
+import {BROWSER_CONTEXT} from "./config/constants"
 import adapters from "./config/adapters"
 import * as playwright from "playwright"
-import delay from "@slack/web-api/dist/helpers"
 import * as dotenv from 'dotenv'
+import {postProperties} from "./slack";
+import delay from "@slack/web-api/dist/helpers";
+import {closeDatabase, db, loadDatabase} from "./helpers/database";
+import {CronJob} from 'cron'
 
-dotenv.config()
-
-const db = new loki(DATABASE_NAME, {
-    persistenceMethod: 'fs',
-})
 const fetchAllProperties = async () => {
     const results = []
     const browser = await playwright.chromium.launch({
@@ -29,37 +25,48 @@ const fetchAllProperties = async () => {
     return results
 }
 
-const loadDatabase: Promise<void> = new Promise((resolve) =>
-    db.loadDatabase(undefined, () => resolve())
+const main = () => {
+    dotenv.config()
+    loadDatabase
+        .then(fetchAllProperties)
+        .then((adapters) => adapters.map((adapter) => {
+            const collection = db.getCollection(adapter.config.name) || db.addCollection(adapter.config.name)
+            const existingApartments = collection.find({
+                id: {
+                    "$in": adapter.properties.map((apartment) => apartment.id)
+                },
+            }).map((apartment) => apartment.id)
+
+            const newApartments = adapter.properties.filter((apartment) => existingApartments.find((ap) => ap === apartment.id) === undefined)
+            console.log(`Found ${newApartments.length} new apartments on ${adapter.config.name}`)
+
+            collection.startTransaction()
+            collection.insert(newApartments)
+            collection.commit()
+            db.save()
+
+            return {newProperties: newApartments, adapter: adapter.config}
+        }))
+        .then(postProperties)
+        .then(() => closeDatabase)
+        .then(() => delay(5_000))
+        .then(() => process.exit(0))
+}
+
+const job = new CronJob(
+    '0 */5 * * * *',
+    () => {
+        console.log("Starting job")
+        try {
+            main()
+        } catch (error) {
+            console.error('Job failed', error)
+        }
+    },
+    () => {
+        console.log("Job completed")
+    },
+    false,
 )
 
-const closeDatabase: Promise<void> = new Promise((resolve) =>
-    db.close(() => resolve())
-)
-
-const main = () => loadDatabase
-    .then(fetchAllProperties)
-    .then((adapters) => adapters.map((adapter) => {
-        const collection = db.getCollection(adapter.config.name) || db.addCollection(adapter.config.name)
-        const existingApartments = collection.find({
-            id: {
-                "$in": adapter.properties.map((apartment) => apartment.id)
-            },
-        }).map((apartment) => apartment.id)
-
-        const newApartments = adapter.properties.filter((apartment) => existingApartments.find((ap) => ap === apartment.id) === undefined)
-        console.log(`Found ${newApartments.length} new apartments on ${adapter.config.name}`)
-
-        collection.startTransaction()
-        collection.insert(newApartments)
-        collection.commit()
-        db.save()
-
-        return {newProperties: newApartments, adapter: adapter.config}
-    }))
-    .then(postProperties)
-    .then(() => closeDatabase)
-    .then(() => delay(5_000))
-    .then(() => process.exit(0))
-
-main()
+job.start()

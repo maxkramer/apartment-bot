@@ -2,12 +2,11 @@ import Property from "../types/property";
 import {WebClient} from "@slack/web-api";
 import Config from "../types/config";
 
-const slackClient = new WebClient(process.env.SLACK_TOKEN);
-
 const googleMapsLink = (address: string) => `https://www.google.com/maps/search/${encodeURIComponent(address)}`
 
-export const postProperties = (adapterResults: { newProperties: Property[], adapter: Config }[]) =>
-    Promise.all(adapterResults.map(({adapter, newProperties}) => newProperties.map((property) =>
+export const postProperties = (adapterResults: { newProperties: Property[], adapter: Config }[]) => {
+    const slackClient = new WebClient(process.env.SLACK_TOKEN)
+    return Promise.all(adapterResults.map(({adapter, newProperties}) => newProperties.map((property) =>
         slackClient.chat.postMessage({
             username: adapter.name,
             icon_url: adapter.slackIcon,
@@ -77,3 +76,4 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                 }
             ]
         }))))
+}
