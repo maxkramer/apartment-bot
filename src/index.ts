@@ -2,10 +2,9 @@ import {BROWSER_CONTEXT} from "./config/constants"
 import adapters from "./config/adapters"
 import * as playwright from "playwright"
 import * as dotenv from 'dotenv'
-import {postProperties} from "./slack";
-import delay from "@slack/web-api/dist/helpers";
-import {closeDatabase, db, loadDatabase} from "./helpers/database";
-import Cron from "croner";
+import {postProperties} from "./slack"
+import {closeDatabase, db, loadDatabase} from "./helpers/database"
+import Cron from "croner"
 
 const fetchAllProperties = async () => {
     const results = []
@@ -55,6 +54,6 @@ const main = () => {
 
 Cron(
     '0 * * * * *',
-    { catch: true },
+    {catch: true},
     main
 )
