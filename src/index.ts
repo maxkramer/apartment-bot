@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv'
 import {postProperties} from "./slack";
 import delay from "@slack/web-api/dist/helpers";
 import {closeDatabase, db, loadDatabase} from "./helpers/database";
-import {CronJob} from 'cron'
+import Cron from "croner";
 
 const fetchAllProperties = async () => {
     const results = []
@@ -27,6 +27,7 @@ const fetchAllProperties = async () => {
 
 const main = () => {
     dotenv.config()
+    console.log("Starting job")
     loadDatabase
         .then(fetchAllProperties)
         .then((adapters) => adapters.map((adapter) => {
@@ -49,24 +50,11 @@ const main = () => {
         }))
         .then(postProperties)
         .then(() => closeDatabase)
-        .then(() => delay(5_000))
-        .then(() => process.exit(0))
+        .then(() => console.log("Completed job"))
 }
 
-const job = new CronJob(
-    '0 */5 * * * *',
-    () => {
-        console.log("Starting job")
-        try {
-            main()
-        } catch (error) {
-            console.error('Job failed', error)
-        }
-    },
-    () => {
-        console.log("Job completed")
-    },
-    false,
+Cron(
+    '0 * * * * *',
+    { catch: true },
+    main
 )
-
-job.start()
