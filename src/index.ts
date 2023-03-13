@@ -53,7 +53,7 @@ const main = () => {
 }
 
 Cron(
-    '0 * 5-22 * * *',
+    '0 */5 5-22 * * *',
     {catch: true},
     main
 )
