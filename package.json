@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && forever start -a -l ./bot.log build/index.js",
+    "start": "npm run build && node build/index.js",
     "start:dev": "npx ts-node src/index.ts",
     "build": "rm -rf build && npx tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
