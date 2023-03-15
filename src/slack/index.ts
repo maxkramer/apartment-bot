@@ -6,8 +6,9 @@ const googleMapsLink = (address: string) => `https://www.google.com/maps/search/
 
 export const postProperties = (adapterResults: { newProperties: Property[], adapter: Config }[]) => {
     const slackClient = new WebClient(process.env.SLACK_TOKEN)
-    return Promise.all(adapterResults.map(({adapter, newProperties}) => newProperties.map((property) =>
-        slackClient.chat.postMessage({
+    return Promise.all(adapterResults.map(({adapter, newProperties}) => newProperties.map((property) => {
+        console.log(property.image)
+        return slackClient.chat.postMessage({
             username: adapter.name,
             icon_url: adapter.slackIcon,
             text: `New apartment found on ${adapter.name}!`,
@@ -21,7 +22,7 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                     },
                     "accessory": {
                         "type": "image",
-                        "image_url": property.image ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                        "image_url": property.image === undefined || property.image === null || property.image.trim().length === 0 ? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' : property.image,
                         "alt_text": property.title
                     }
                 },
@@ -75,5 +76,5 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                     "type": "divider"
                 }
             ]
-        }))))
+        })})))
 }
