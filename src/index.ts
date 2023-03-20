@@ -56,7 +56,7 @@ const main = () => {
 
             return {newProperties: newApartments, adapter: adapter.config}
         }))
-        // .then(postProperties)
+        .then(postProperties)
         .then(() => closeDatabase)
         .then(() => console.log("Completed job"))
 }
