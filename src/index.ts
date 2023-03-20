@@ -47,7 +47,6 @@ const main = () => {
             })
 
             console.log(`Found ${newApartments.length}/${adapter.properties.length} new apartments on ${adapter.config.name}`)
-            console.log(newApartments.map((ap) => ap.url))
 
             collection.startTransaction()
             collection.insert(newApartments)
