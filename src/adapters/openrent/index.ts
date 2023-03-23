@@ -3,6 +3,8 @@ import Config from "../../types/config";
 import axios from "axios";
 import {Listing} from "./listing";
 import Property from "../../types/property";
+import {logger} from "../../config/constants";
+
 const generateSearchUrl = (config: Config) => `https://www.openrent.co.uk/properties-to-rent/london/flats?term=London&prices_min=${config.minPrice}&prices_max=${config.maxPrice}&isLive=true&priceperweek=true`
 const generateGetPropertiesUrl = (ids: Array<string>) => {
     const params = new URLSearchParams(ids.map((id) => ["ids", id]))
@@ -34,7 +36,7 @@ const chunkIds = (ids: Array<string>): Array<Array<string>> => {
 
 const openRentAdapter: Adapter = ({
     fetchProperties: (config, browser) => {
-        console.log(`Fetching properties from ${config.name}`)
+        logger.info(`Fetching properties from ${config.name}`)
         return browser
             .newPage()
             .then((page) =>

@@ -1,4 +1,6 @@
 import randomUserAgent from "random-useragent";
+import Pino from 'pino'
+import path from 'path'
 
 export const DATABASE_NAME = 'apartments.db'
 export const BROWSER_CONTEXT = {
@@ -17,3 +19,22 @@ export const BROWSER_CONTEXT = {
         height: 1218
     }
 }
+
+export const logger = Pino({
+    transport: {
+        target: 'pino-pretty',
+        options: {
+            destination: path.resolve('./cron-job.log'),
+            colorize: true,
+            translateTime: "yyyy-mm-dd h:MM:ss TT Z",
+        },
+    },
+    base: undefined,
+    formatters: {
+        level: (label) => {
+            return {
+                level: label
+            }
+        }
+    }
+})

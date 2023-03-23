@@ -1,35 +1,41 @@
-import {BROWSER_CONTEXT} from "./config/constants"
+import {BROWSER_CONTEXT, logger} from "./config/constants"
 import adapters from "./config/adapters"
 import * as playwright from "playwright"
 import * as dotenv from 'dotenv'
-import {postProperties} from "./slack"
-import {closeDatabase, db, loadDatabase} from "./helpers/database"
-import { Cron } from "croner"
+import {closeDatabase, db, loadDatabase, saveDatabase} from "./helpers/database"
+import Cron from "croner";
 
 const fetchAllProperties = async () => {
     const results = []
     const browser = await playwright.chromium.launch({
         headless: true,
-    }).then((browser) => browser.newContext(BROWSER_CONTEXT))
+    })
+    const context = await browser.newContext(BROWSER_CONTEXT)
 
     for (const fetchProperties of adapters
         .filter((adapter) => adapter.enabled)
-        .map((adapter) => adapter.adapter.fetchProperties(adapter.config, browser)
+        .map((adapter) => adapter.adapter.fetchProperties(adapter.config, context)
             .then((properties) => ({properties, ...adapter}))
+            .catch((ex) => logger.error(`Error fetching properties from ${adapter.config.name}`, ex))
         )) {
-        results.push(await fetchProperties)
+
+        const propertyResults = await fetchProperties
+        if (propertyResults) {
+            results.push(propertyResults)
+        }
     }
 
+    await context.close()
     await browser.close()
     return results
 }
 
-const main = () => {
+const main = async () => {
     dotenv.config()
-    console.log("Starting job")
-    loadDatabase
+    logger.info('Starting job')
+    return loadDatabase
         .then(fetchAllProperties)
-        .then((adapters) => adapters.map((adapter) => {
+        .then((adapters) => Promise.resolve(adapters.map((adapter) => {
             const collection = db.getCollection(adapter.config.name) ?? db.addCollection(adapter.config.name)
             const existingApartments = new Set(collection.find({
                 id: {
@@ -46,22 +52,21 @@ const main = () => {
                 return false
             })
 
-            console.log(`Found ${newApartments.length}/${adapter.properties.length} new apartments on ${adapter.config.name}`)
+            logger.info(`Found ${newApartments.length}/${adapter.properties.length} new apartments on ${adapter.config.name}`)
 
             collection.startTransaction()
             collection.insert(newApartments)
             collection.commit()
-            db.save()
 
             return {newProperties: newApartments, adapter: adapter.config}
-        }))
-        .then(postProperties)
-        .then(() => closeDatabase)
-        .then(() => console.log("Completed job"))
+        })))
+        .then((results) => saveDatabase().then(() => closeDatabase()).then(() => results))
+        // .then(postProperties)
+        .then(() => logger.info("Completed job"))
 }
 
 Cron(
-    '0 */5 5-23 * * *',
+    '0 * 5-23 * * *',
     {
         catch: true,
         unref: false,
