@@ -4,6 +4,7 @@ import * as playwright from "playwright"
 import * as dotenv from 'dotenv'
 import {closeDatabase, db, loadDatabase, saveDatabase} from "./helpers/database"
 import Cron from "croner";
+import {postProperties} from "./slack";
 
 const fetchAllProperties = async () => {
     const results = []
@@ -61,7 +62,7 @@ const main = async () => {
             return {newProperties: newApartments, adapter: adapter.config}
         })))
         .then((results) => saveDatabase().then(() => closeDatabase()).then(() => results))
-        // .then(postProperties)
+        .then(postProperties)
         .then(() => logger.info("Completed job"))
 }
 
