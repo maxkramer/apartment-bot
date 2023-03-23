@@ -67,7 +67,7 @@ const main = async () => {
 }
 
 Cron(
-    '0 * 5-23 * * *',
+    '0 */5 5-23 * * *',
     {
         catch: true,
         unref: false,
