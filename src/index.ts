@@ -1,6 +1,7 @@
 import {BROWSER_CONTEXT, logger} from "./config/constants"
 import adapters from "./config/adapters"
-import * as playwright from "playwright"
+import {chromium} from "playwright-extra"
+import stealth from 'puppeteer-extra-plugin-stealth'
 import * as dotenv from 'dotenv'
 import {closeDatabase, db, loadDatabase, saveDatabase} from "./helpers/database"
 import Cron from "croner";
@@ -8,9 +9,7 @@ import {postProperties} from "./slack";
 
 const fetchAllProperties = async () => {
     const results = []
-    const browser = await playwright.chromium.launch({
-        headless: true,
-    })
+    const browser = await chromium.use(stealth()).launch({headless: true})
     const context = await browser.newContext(BROWSER_CONTEXT)
 
     for (const fetchProperties of adapters
