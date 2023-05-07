@@ -5,7 +5,7 @@ import {Page} from "playwright";
 import {Listing, Pagination} from "./listing";
 import {logger} from "../../config/constants";
 
-const generateSearchUrl = (config: Config, index: string) => `https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=USERDEFINEDAREA%5E%7B"polylines"%3A"qhoyHjqi%40_tD%60WuyAu%7DNuIkaLjlAoyC%60tCcgBxc%40%60iAn%60ArVdc%40%7C%7C%40r~%40%60%7BAbj%40%60aC%7DJjlCxfA%7CnAtkAhd%40pWn%7D%40vd%40h%7BDtA%7C_GavCl%60A%7DlC~uC%7B%60B%7DgE"%7D&maxBedrooms=3&minBedrooms=1&maxPrice=${config.maxPrice}&minPrice=${config.minPrice}&propertyTypes=detached%2Csemi-detached%2Cterraced%2Cflat%2Cbungalow&maxDaysSinceAdded=7&mustHave=&dontShow=houseShare%2Cretirement%2Cstudent&furnishTypes=furnished%2CpartFurnished&keywords=&index=${index}`
+const generateSearchUrl = (config: Config, index: string) => `https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=USERDEFINEDAREA%5E%7B"polylines"%3A"sztyHhmh%40%60bAis%40p%7B%40odAz%5C%5C~_%40dy%40XsH~hBvz%40%7Cj%40veAgY%7Cr%40uq%40dJycC~pAgeA%7BYcxCi%40%7CGWyaAdYfhDx%7B%40wXuDycCc_A%7Dq%40gt%40sfAeoBm%5C%5ChAksExOmyAm_A%7DPyMgl%40%7Bu%40fMmeA%7BfAahArAky%40%7Ce%40ii%40fo%40e%5C%5C%60~%40nCvqB_c%40zN~Gnk%40~cAhN~K%7Bw%40jiA_FzPzp%40zNziAkj%40jnA_DpeA_%7BBfo%40nNgz%40kPu%5Esl%40heAho%40huHjWlqCl~%40ok%40"%7D&maxBedrooms=3&minBedrooms=1&maxPrice=${config.maxPrice}&minPrice=${config.minPrice}&propertyTypes=detached%2Csemi-detached%2Cterraced%2Cflat%2Cbungalow&maxDaysSinceAdded=7&mustHave=&dontShow=houseShare%2Cretirement%2Cstudent&furnishTypes=furnished%2CpartFurnished&keywords=&index=${index}`
 
 const mapListings: (listings: Array<Listing>) => Array<Property> = (listings) => listings.map((listing) => ({
     id: listing.id.toString(),
