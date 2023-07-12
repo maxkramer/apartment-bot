@@ -4,6 +4,9 @@ This project is a command-line app containing a cron-job that will frequently cr
 apartments for you and post them to
 Slack, given a specific set of search criteria.
 
+NB: It can be somewhat temperamental since a lot of checks are in place to prevent crawlers on these websites. Changes
+will be inevitable.
+
 ## Installation
 
 1. Clone this repository
@@ -41,15 +44,15 @@ $ npm start
 
 To run this project, you will need to populate the following environment variables in your .env file:
 
-| Name        | Description                                                                                    | Value |   |   |
-|-------------|------------------------------------------------------------------------------------------------|-------|---|---|
-| SLACK_TOKEN | A Slack API user-token that you can get from: https://api.slack.com/authentication/token-types |       |   |   |
+| Name        | Description                                                                                    | Value |
+|-------------|------------------------------------------------------------------------------------------------|-------|
+| SLACK_TOKEN | A Slack API user-token that you can get from: https://api.slack.com/authentication/token-types |       |
 
 ## Configuration
 
 ### Enabling / Disabling Adapters
 
-Simply toggle the `enabled` flag in [adapters.ts](/src/config/adapters.ts) on.
+Simply toggle the `enabled` flag in [adapters.ts](/src/config/adapters.ts) on the adapter you'd like to modify.
 
 ### Modifying Search Parameters
 
