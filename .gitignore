@@ -15,10 +15,9 @@
 .DS_Store
 
 # dotenv files
-!.env.example
 .env
 .env.*
-
+!.env.example
 
 *.log
 .vscode
