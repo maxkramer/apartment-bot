@@ -56,7 +56,8 @@ Simply toggle the `enabled` flag in [adapters.ts](/src/config/adapters.ts) on th
 
 ### Modifying Search Parameters
 
-Currently the only available search parameters to modify are the min and max prices. These can be adjusted in
+Currently the only available search parameters to modify are the min and max prices, min number of bedrooms and whether
+its (part) furnished. These can be adjusted in
 the [relevant adapter file](/src/config).
 
 ### Modifying the Slack Message

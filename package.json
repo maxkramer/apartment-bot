@@ -1,6 +1,6 @@
 {
   "name": "london-apartment-bot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A command-line app containing a cron-job that will frequently crawl R**htMve* & *Z**pla to find new apartments for you and post them to Slack",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,7 @@
     "london",
     "apartment"
   ],
+  "homepage": "https://github.com/maxkramer/london-apartment-bot#readme",
   "author": "Max Kramer",
   "license": "CC-BY-NC-4.0",
   "devDependencies": {

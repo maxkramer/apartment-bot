@@ -4,7 +4,7 @@ import {Listing} from "./listing";
 import Property from "../../types/property";
 import {logger} from "../../config/constants";
 
-const generateSearchUrl = (config: Config) => `https://www.zoopla.co.uk/to-rent/map/property/london/?beds_min=1&price_frequency=per_month&price_max=${config.maxPrice}&price_min=${config.minPrice}&q=London&radius=0&results_sort=newest_listings&search_source=to-rent&is_retirement_home=false&is_shared_accommodation=false&hidePoly=false&available_from=3months&furnished_state=furnished&polyenc=m%7DeyHdaa%40cw%40toA%7DgDrjDyiBkbBwv%40pIcbBhsAeUo%7DE%60s%40mwFzg%40ytFkaD%7BI%60Z%7BxBlc%40a%60Abs%40qyBhoCxQfVtp%40n~%40pTziAviAmKphGxfCbqAzh%40%7CZ~f%40ncE`
+const generateSearchUrl = (config: Config) => `https://www.zoopla.co.uk/to-rent/map/property/london/?beds_min=${config.minBeds}&price_frequency=per_month&price_max=${config.maxPrice}&price_min=${config.minPrice}&q=London&radius=0&results_sort=newest_listings&search_source=to-rent&is_retirement_home=false&is_shared_accommodation=false&hidePoly=false&available_from=3months${config.furnished ? '&furnished_state=furnished' : ''}&polyenc=m%7DeyHdaa%40cw%40toA%7DgDrjDyiBkbBwv%40pIcbBhsAeUo%7DE%60s%40mwFzg%40ytFkaD%7BI%60Z%7BxBlc%40a%60Abs%40qyBhoCxQfVtp%40n~%40pTziAviAmKphGxfCbqAzh%40%7CZ~f%40ncE`
 const featureToName = (feature: string) => {
     if (feature === 'bed') {
         return 'Bedrooms'
