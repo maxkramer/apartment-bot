@@ -1,5 +1,5 @@
 import {BROWSER_CONTEXT, logger} from "./config/constants"
-import adapters from "./config/adapters"
+import adapters from "./helpers/adapters"
 import {chromium} from "playwright-extra"
 import stealth from 'puppeteer-extra-plugin-stealth'
 import * as dotenv from 'dotenv'
@@ -13,7 +13,7 @@ const fetchAllProperties = async () => {
     const context = await browser.newContext(BROWSER_CONTEXT)
 
     for (const fetchProperties of adapters
-        .filter((adapter) => adapter.enabled)
+        .filter((adapter) => adapter.config.enabled)
         .map((adapter) => adapter.adapter.fetchProperties(adapter.config, context)
             .then((properties) => ({properties, ...adapter}))
             .catch((ex) => logger.error(`Error fetching properties from ${adapter.config.name}`, ex))

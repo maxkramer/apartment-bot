@@ -2,6 +2,7 @@ import Config from "../types/config";
 
 const openRentConfig: Config = {
     name: 'Open Rent',
+    enabled: false,
     maxPrice: 2000,
     minPrice: 1300,
     minBeds: 1,

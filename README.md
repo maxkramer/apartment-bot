@@ -50,15 +50,23 @@ To run this project, you will need to populate the following environment variabl
 
 ## Configuration
 
+All configuration specific to the different adapters can be found in the [relevant adapter file](/src/config).
+
 ### Enabling / Disabling Adapters
 
-Simply toggle the `enabled` flag in [adapters.ts](/src/config/adapters.ts) on the adapter you'd like to modify.
+Simply set the `enabled` flag to `true` or `false`.
 
 ### Modifying Search Parameters
 
-Currently the only available search parameters to modify are the min and max prices, min number of bedrooms and whether
-its (part) furnished. These can be adjusted in
-the [relevant adapter file](/src/config).
+The parameters that can be changed are:
+
+- `name`: The name to show in Slack
+- `enabled`: Whether the adapter is enabled or disabled
+- `maxPrice`: The maximum price of listings to show
+- `minPrice`: The minimum price of listings to show
+- `minBeds`:  The minimum number of beds in a listing to show
+- `furnished`: Whether it should show only furnished apartments
+- `slackIcon`: The icon to use for this adapter in Slack
 
 ### Modifying the Slack Message
 

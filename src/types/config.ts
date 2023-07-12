@@ -1,8 +1,10 @@
 type Config = {
+    enabled: boolean
     minPrice: number
     maxPrice: number
-    minBeds: number,
+    minBeds: number
     furnished: boolean
+    location?: string
     slackIcon: string
     name: string
 }
