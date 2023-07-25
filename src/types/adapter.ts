@@ -1,9 +1,9 @@
 import Config from "./config";
-import Property from "./property";
+import {Apartment} from "../entity";
 import {BrowserContext} from "playwright-core";
 
 type Adapter = {
-    fetchProperties: (config: Config, browser: BrowserContext) => Promise<Array<Property>>
+    fetchAll: (config: Config, browser: BrowserContext) => Promise<Array<Apartment>>
 }
 
 export default Adapter

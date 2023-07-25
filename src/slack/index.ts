@@ -1,30 +1,27 @@
-import Property from "../types/property";
+import {Apartment} from "../entity";
 import {WebClient} from "@slack/web-api";
 import Config from "../types/config";
 
 const googleMapsLink = (address: string) => `https://www.google.com/maps/search/${encodeURIComponent(address)}`
 
-export const postProperties = (adapterResults: { newProperties: Property[], adapter: Config }[]) => {
+export const postAll = ({apartments, adapter}: { apartments: Apartment[], adapter: Config }) => {
     const slackClient = new WebClient(process.env.SLACK_TOKEN)
-    return Promise.all(adapterResults.map(({
-                                               adapter,
-                                               newProperties
-                                           }) => newProperties.map((property) => slackClient.chat.postMessage({
+    return Promise.all(apartments.map((apartment) => slackClient.chat.postMessage({
         username: adapter.name,
         icon_url: adapter.slackIcon,
         text: `New apartment found on ${adapter.name}!`,
-        channel: 'C04T5JD0VFC',
+        channel: process.env.SLACK_CHANNEL || '',
         blocks: [
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": `*<${property.url}|${property.title}>*\n\n${property.prices.monthly} per month\n${property.prices.weekly} per week\n\n${property.description}. `
+                    "text": `*<${apartment.url}|${apartment.title}>*\n\n£${apartment.prices.monthly} per month\n£${apartment.prices.weekly} per week\n\n${apartment.description}. `
                 },
                 "accessory": {
                     "type": "image",
-                    "image_url": property.image === undefined || property.image === null || property.image.trim().length === 0 ? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' : property.image,
-                    "alt_text": property.title
+                    "image_url": apartment.image === undefined || apartment.image === null || apartment.image.trim().length === 0 ? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' : apartment.image,
+                    "alt_text": apartment.title
                 }
             },
             {
@@ -38,7 +35,7 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                     {
                         "type": "plain_text",
                         "emoji": true,
-                        "text": `Location: ${property.address}.`
+                        "text": `Location: ${apartment.address}.`
                     }
                 ]
             },
@@ -47,7 +44,7 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                 "elements": [{
                     "type": "button",
                     "action_id": "1",
-                    "url": property.url,
+                    "url": apartment.url,
                     "style": "primary",
                     "text": {
                         "type": "plain_text",
@@ -56,7 +53,7 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                 }, {
                     "type": "button",
                     "action_id": "2",
-                    "url": googleMapsLink(property.address),
+                    "url": googleMapsLink(apartment.address),
                     "style": "primary",
                     "text": {
                         "type": "plain_text",
@@ -65,7 +62,7 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                 }, {
                     "type": "button",
                     "action_id": "3",
-                    "url": property.messageLink,
+                    "url": apartment.messageUrl,
                     "style": "primary",
                     "text": {
                         "type": "plain_text",
@@ -77,5 +74,5 @@ export const postProperties = (adapterResults: { newProperties: Property[], adap
                 "type": "divider"
             }
         ]
-    }))))
+    })))
 }

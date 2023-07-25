@@ -1,25 +1,31 @@
-import {BROWSER_CONTEXT, logger} from "./config/constants"
-import adapters from "./helpers/adapters"
+import {BROWSER_CONTEXT, JOB_CRONTAB, logger} from "./config/constants"
+import enabledAdapters from "./helpers/adapters"
 import {chromium} from "playwright-extra"
 import stealth from 'puppeteer-extra-plugin-stealth'
 import * as dotenv from 'dotenv'
-import {closeDatabase, db, loadDatabase, saveDatabase} from "./helpers/database"
+import 'reflect-metadata'
+import {AppDataSource} from "./data-source";
+import {Apartment} from "./entity";
+import {In} from "typeorm";
+import {postAll} from "./slack";
 import Cron from "croner";
-import {postProperties} from "./slack";
 
-const fetchAllProperties = async () => {
+const fetchAllApartments = async () => {
     const results = []
     const browser = await chromium.use(stealth()).launch({headless: true})
     const context = await browser.newContext(BROWSER_CONTEXT)
 
-    for (const fetchProperties of adapters
-        .filter((adapter) => adapter.config.enabled)
-        .map((adapter) => adapter.adapter.fetchProperties(adapter.config, context)
-            .then((properties) => ({properties, ...adapter}))
-            .catch((ex) => logger.error(`Error fetching properties from ${adapter.config.name}`, ex))
-        )) {
+    const fetchFunctions = enabledAdapters
+        .map((adapter) => adapter.adapter.fetchAll(adapter.config, context)
+            .then((apartments) => ({apartments, ...adapter}))
+            .catch((ex) => {
+                logger.error(`Error fetching apartments from ${adapter.config.name}`)
+                logger.error(ex)
+            })
+        )
 
-        const propertyResults = await fetchProperties
+    for (const fetchAll of fetchFunctions) {
+        const propertyResults = await fetchAll
         if (propertyResults) {
             results.push(propertyResults)
         }
@@ -33,40 +39,46 @@ const fetchAllProperties = async () => {
 const main = async () => {
     dotenv.config()
     logger.info('Starting job')
-    return loadDatabase
-        .then(fetchAllProperties)
-        .then((adapters) => Promise.resolve(adapters.map((adapter) => {
-            const collection = db.getCollection(adapter.config.name) ?? db.addCollection(adapter.config.name)
-            const existingApartments = new Set(collection.find({
-                id: {
-                    "$in": adapter.properties.map((apartment) => apartment.id)
-                },
-            }).map((apartment) => apartment.id))
 
-            const duplicatesHashMap: Record<string, object> = {}
-            const newApartments = adapter.properties.filter((apartment) => {
-                if (duplicatesHashMap[apartment.id] === undefined) {
-                    duplicatesHashMap[apartment.id] = {}
-                    return !existingApartments.has(apartment.id)
-                }
-                return false
-            })
+    const dataSource = await AppDataSource.initialize()
+    const apartmentRepository = dataSource.getRepository(Apartment)
 
-            logger.info(`Found ${newApartments.length}/${adapter.properties.length} new apartments on ${adapter.config.name}`)
+    const all = await fetchAllApartments()
+    for (const {config, apartments} of all) {
+        const seenApartments = await apartmentRepository.find({
+            where: {
+                externalId: In(apartments.map((apartment) => apartment.externalId)),
+                adapterName: config.name
+            },
+            select: {
+                externalId: true
+            }
+        })
 
-            collection.startTransaction()
-            collection.insert(newApartments)
-            collection.commit()
+        const seenExternalIds = seenApartments.map((apartment) => apartment.externalId)
+        const duplicatesHashMap: Record<string, object> = {}
+        const newApartments = apartments.filter((apartment) => {
+            if (duplicatesHashMap[apartment.externalId] === undefined) {
+                duplicatesHashMap[apartment.externalId] = {}
+                return !seenExternalIds.includes(apartment.externalId)
+            }
+            return false
+        })
 
-            return {newProperties: newApartments, adapter: adapter.config}
-        })))
-        .then((results) => saveDatabase().then(() => closeDatabase()).then(() => results))
-        .then(postProperties)
-        .then(() => logger.info("Completed job"))
+        logger.info(`Found ${newApartments.length}/${apartments.length} new apartments on ${config.name}`)
+
+        if (newApartments.length > 0) {
+            const savedApartments = await apartmentRepository.save(newApartments)
+            await postAll({apartments: savedApartments, adapter: config})
+        }
+    }
+
+    await dataSource.destroy()
+    logger.info("Completed job")
 }
 
 Cron(
-    '0 */5 5-23 * * *',
+    JOB_CRONTAB,
     {
         catch: true,
         unref: false,
