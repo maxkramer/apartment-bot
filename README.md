@@ -44,15 +44,15 @@ $ npm start
 
 To run this project, you will need to populate the following environment variables in your .env file:
 
-| Name              | Description                                                                                    | Value | Default Value      |   |
-|-------------------|------------------------------------------------------------------------------------------------|-------|--------------------|---|
-| SLACK_TOKEN       | A Slack API user-token that you can get from: https://api.slack.com/authentication/token-types |       |                    |   |
-| SLACK_CHANNEL     | The Channel (id) that you would like to post the apartments to                                 |       | ''                 |   |
-| DATABASE_HOST     | The host of the postgres instance e.g. localhost, IP address, fqdn                             |       | localhost          |   |
-| DATABASE_PORT     | The port of the postgres instance (usually 5432)                                               |       | 5432               |   |
-| DATABASE_USERNAME | The username to login to the postgres instance with                                            |       | postgres           |   |
-| DATABASE_PASSWORD | The password to login to the postgres instance with                                            |       | ''                 |   |
-| DATABASE_NAME     | The name of the database to store the listings in, that the user has access to                 |       | londonapartmentbot |   |
+| Name              | Description                                                                                    | Default Value      |   |
+|-------------------|------------------------------------------------------------------------------------------------|--------------------|---|
+| SLACK_TOKEN       | A Slack API user-token that you can get from: https://api.slack.com/authentication/token-types |                    |   |
+| SLACK_CHANNEL     | The Channel (id) that you would like to post the apartments to                                 | ''                 |   |
+| DATABASE_HOST     | The host of the postgres instance e.g. localhost, IP address, fqdn                             | localhost          |   |
+| DATABASE_PORT     | The port of the postgres instance (usually 5432)                                               | 5432               |   |
+| DATABASE_USERNAME | The username to login to the postgres instance with                                            | postgres           |   |
+| DATABASE_PASSWORD | The password to login to the postgres instance with                                            | ''                 |   |
+| DATABASE_NAME     | The name of the database to store the listings in, that the user has access to                 | londonapartmentbot |   |
 
 ## Configuration
 
