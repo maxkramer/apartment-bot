@@ -1,14 +1,12 @@
-import {BROWSER_CONTEXT, JOB_CRONTAB, logger} from "./config/constants"
+import {BROWSER_CONTEXT, logger} from "./config/constants"
 import enabledAdapters from "./helpers/adapters"
 import {chromium} from "playwright-extra"
 import stealth from 'puppeteer-extra-plugin-stealth'
-import * as dotenv from 'dotenv'
 import 'reflect-metadata'
 import {AppDataSource} from "./data-source";
 import {Apartment} from "./entity";
 import {In} from "typeorm";
 import {postAll} from "./slack";
-import Cron from "croner";
 
 const fetchAllApartments = async () => {
     const results = []
@@ -37,7 +35,6 @@ const fetchAllApartments = async () => {
 }
 
 const main = async () => {
-    dotenv.config()
     logger.info('Starting job')
 
     const dataSource = await AppDataSource.initialize()
@@ -77,11 +74,14 @@ const main = async () => {
     logger.info("Completed job")
 }
 
-Cron(
-    JOB_CRONTAB,
-    {
-        catch: true,
-        unref: false,
-    },
-    main,
-)
+main()
+
+//
+// Cron(
+//     JOB_CRONTAB,
+//     {
+//         catch: true,
+//         unref: false,
+//     },
+//     main,
+// )

@@ -8,8 +8,11 @@ export const AppDataSource = new DataSource({
     username: process.env.DATABASE_USERNAME ?? 'postgres',
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME ?? "londonapartmentbot",
+    connectTimeoutMS: 10_000,
+    installExtensions: false,
     logging: false,
     entities: [__dirname + '/entity/*.ts'],
     migrations: [__dirname + '/migration/*.js'],
+    migrationsRun: true,
     namingStrategy: new SnakeNamingStrategy()
 })

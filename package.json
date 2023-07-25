@@ -4,8 +4,8 @@
   "description": "A command-line app containing a cron-job that will frequently crawl R**htMve* & *Z**pla to find new apartments for you and post them to Slack",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production npm run build && node build/index.js",
-    "start:dev": "npx ts-node src/index.ts",
+    "start": "NODE_ENV=production npm run build && node -r dotenv/config build/index.js",
+    "start:dev": "npx ts-node -r dotenv/config src/index.ts",
     "build": "rm -rf build && npx tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix"
