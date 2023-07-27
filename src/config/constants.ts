@@ -35,10 +35,8 @@ export const logger = Pino({
     },
     base: undefined,
     formatters: {
-        level: (label) => {
-            return {
-                level: label
-            }
-        }
+        level: (label) => ({
+            level: label
+        })
     }
 })
