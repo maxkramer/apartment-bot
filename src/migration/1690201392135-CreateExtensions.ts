@@ -4,8 +4,8 @@ export class CreateExtensions1690200387764 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-        CREATE EXTENSION "uuid-ossp";
-        CREATE EXTENSION "postgis";
+        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        CREATE EXTENSION IF NOT EXISTS "postgis";
         `)
     }
 

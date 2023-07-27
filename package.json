@@ -2,9 +2,10 @@
   "name": "london-apartment-bot",
   "version": "0.0.1",
   "description": "A command-line app containing a cron-job that will frequently crawl R**htMve* & *Z**pla to find new apartments for you and post them to Slack",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
-    "start": "NODE_ENV=production npm run build && node -r dotenv/config build/index.js",
+    "db:migrate": "node -r dotenv/config node_modules/typeorm/cli migration:run -d build/data-source.js",
+    "start": "NODE_ENV=production npm run db:migrate && node -r dotenv/config build/index.js",
     "start:dev": "npx ts-node -r dotenv/config src/index.ts",
     "build": "rm -rf build && npx tsc",
     "test": "echo \"Error: no test specified\" && exit 1",

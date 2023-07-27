@@ -7,7 +7,7 @@ export class CreateApartments1690200387766 implements MigrationInterface {
             `
                 CREATE TABLE apartment
                 (
-                    id              UUID PRIMARY KEY            NOT NULL,
+                    id              UUID PRIMARY KEY            NOT NULL DEFAULT uuid_generate_v4(),
                     external_id     VARCHAR(32)                 NOT NULL,
                     title           TEXT                        NOT NULL,
                     description     TEXT                        NOT NULL,
@@ -21,7 +21,7 @@ export class CreateApartments1690200387766 implements MigrationInterface {
                     message_url     TEXT                        NOT NULL,
                     adapter_name    VARCHAR(20)                 NOT NULL,
                     published_on    TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-                    created_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL
+                    created_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp
                 )`
         );
         await queryRunner.query(`

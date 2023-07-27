@@ -40,6 +40,8 @@ const main = async () => {
     const dataSource = await AppDataSource.initialize()
     const apartmentRepository = dataSource.getRepository(Apartment)
 
+    await apartmentRepository.count()
+
     const all = await fetchAllApartments()
     for (const {config, apartments} of all) {
         const seenApartments = await apartmentRepository.find({

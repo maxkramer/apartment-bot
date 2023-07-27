@@ -1,6 +1,5 @@
 import randomUserAgent from "random-useragent";
 import Pino from 'pino'
-import path from 'path'
 import {code} from "currency-codes";
 
 export const JOB_CRONTAB = '0 */5 5-23 * * *'
@@ -27,11 +26,11 @@ export const BROWSER_CONTEXT = {
 export const logger = Pino({
     transport: {
         target: 'pino-pretty',
-        options: process.env.NODE_ENV === 'production' ? {
-            destination: path.resolve('/var/log/london-apartment-bot/cron-job.log'),
-            colorize: true,
-            translateTime: "yyyy-mm-dd h:MM:ss TT Z",
-        } : undefined,
+        // options: {
+        //     destination: path.resolve(__dirname + '/cron-job.log'),
+        //     colorize: true,
+        //     translateTime: "yyyy-mm-dd h:MM:ss TT Z",
+        // },
     },
     base: undefined,
     formatters: {
