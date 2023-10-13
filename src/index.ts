@@ -1,4 +1,4 @@
-import {BROWSER_CONTEXT, logger} from "./config/constants"
+import {BROWSER_CONTEXT, JOB_CRONTAB, logger} from "./config/constants"
 import enabledAdapters from "./helpers/adapters"
 import {chromium} from "playwright-extra"
 import stealth from 'puppeteer-extra-plugin-stealth'
@@ -7,6 +7,7 @@ import {AppDataSource} from "./data-source";
 import {Apartment} from "./entity";
 import {In} from "typeorm";
 import {postAll} from "./slack";
+import Cron from "croner"
 
 const fetchAllApartments = async () => {
     const results = []
@@ -14,7 +15,6 @@ const fetchAllApartments = async () => {
         ...BROWSER_CONTEXT,
         headless: false,
     })
-    // const context = await browser
 
     const fetchFunctions = enabledAdapters
         .map((adapter) => adapter.adapter.fetchAll(adapter.config, browser)
@@ -32,7 +32,6 @@ const fetchAllApartments = async () => {
         }
     }
 
-    // await context.close()
     await browser.close()
     return results
 }
@@ -79,14 +78,11 @@ const main = async () => {
     logger.info("Completed job")
 }
 
-main()
-
-//
-// Cron(
-//     JOB_CRONTAB,
-//     {
-//         catch: true,
-//         unref: false,
-//     },
-//     main,
-// )
+Cron(
+    JOB_CRONTAB,
+    {
+        catch: true,
+        unref: false,
+    },
+    main,
+)
