@@ -3,7 +3,6 @@ import path from 'path'
 import {code} from "currency-codes";
 
 export const JOB_CRONTAB = '0 */20 5-23 * * *'
-export const DATABASE_NAME = 'apartments.db'
 export const DEFAULT_CURRENCY_CODE = code('GBP')?.code || 'GBP'
 export const DEFAULT_PAGE_TIMEOUT = 2_000
 export const BROWSER_CONTEXT = {
