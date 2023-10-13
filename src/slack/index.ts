@@ -8,15 +8,15 @@ export const postAll = ({apartments, adapter}: { apartments: Apartment[], adapte
     const slackClient = new WebClient(process.env.SLACK_TOKEN)
     return Promise.all(apartments.map((apartment) => slackClient.chat.postMessage({
         username: adapter.name,
-        icon_url: adapter.slackIcon,
+        icon_url: adapter.slack.icon,
         text: `New apartment found on ${adapter.name}!`,
-        channel: process.env.SLACK_CHANNEL || '',
+        channel: adapter.slack.channel,
         blocks: [
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": `*<${apartment.url}|${apartment.title}>*\n\n£${apartment.prices.monthly} per month\n£${apartment.prices.weekly} per week\n\n${apartment.description}. `
+                    "text": `*<${apartment.url}|${apartment.title}>*\n\n${apartment.prices.currency}${apartment.prices.monthly} per month\n${apartment.prices.currency}${apartment.prices.weekly} per week\n\n${apartment.description}. `
                 },
                 "accessory": {
                     "type": "image",

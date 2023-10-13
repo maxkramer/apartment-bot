@@ -5,8 +5,11 @@ type Config = {
     minBeds: number
     furnished: boolean
     location?: string
-    slackIcon: string
     name: string
+    slack: {
+        icon: string,
+        channel: string
+    }
 }
 
 export default Config

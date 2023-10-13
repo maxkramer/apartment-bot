@@ -2,14 +2,14 @@ import Adapter from "../../types/adapter";
 import Config from "../../types/config";
 import {Apartment} from "../../entity";
 import {Page} from "playwright";
-import {Listing, Pagination} from "./listing";
+import {Models, Pagination} from "./models";
 import {DEFAULT_CURRENCY_CODE, DEFAULT_PAGE_TIMEOUT, logger} from "../../config/constants";
 import Prices from "../../entity/prices";
 import {BASE_URL} from "./constants";
 import {parseMoneyFromDisplayPrice} from "./utils";
 
 const generateSearchUrl = (config: Config, index: string) => `${BASE_URL}/property-to-rent/find.html?locationIdentifier=${config.location}&maxBedrooms=${config.minBeds + 2}&minBedrooms=${config.minBeds}&maxPrice=${config.maxPrice}&minPrice=${config.minPrice}&propertyTypes=detached%2Csemi-detached%2Cterraced%2Cflat%2Cbungalow&maxDaysSinceAdded=7&mustHave=&dontShow=houseShare%2Cretirement%2Cstudent${config.furnished ? '&furnishTypes=furnished%2CpartFurnished' : ''}&keywords=&index=${index}`
-const mapListing = (listing: Listing, adapterName: string): Apartment => {
+const mapListing = (listing: Models, adapterName: string): Apartment => {
     const apartment = new Apartment()
     apartment.externalId = listing.id.toString()
     apartment.title = listing.propertyTypeFullDescription
@@ -34,12 +34,12 @@ const mapListing = (listing: Listing, adapterName: string): Apartment => {
     return apartment
 }
 
-const runSearch = async (page: Page, config: Config): Promise<Array<Listing>> => {
+const runSearch = async (page: Page, config: Config): Promise<Array<Models>> => {
     const fetchPage = (index: string) => {
         logger.info(`Going to ${generateSearchUrl(config, index)}`)
         return page.goto(generateSearchUrl(config, index))
             .then(() => page.waitForTimeout(DEFAULT_PAGE_TIMEOUT))
-            .then(() => page.evaluate<Array<Listing>>('window.jsonModel.properties'))
+            .then(() => page.evaluate<Array<Models>>('window.jsonModel.properties'))
             .then((properties) => page.evaluate<Pagination>('window.jsonModel.pagination')
                 .then((pagination) => ({
                     pagination,

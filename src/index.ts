@@ -10,11 +10,14 @@ import {postAll} from "./slack";
 
 const fetchAllApartments = async () => {
     const results = []
-    const browser = await chromium.use(stealth()).launch({headless: true})
-    const context = await browser.newContext(BROWSER_CONTEXT)
+    const browser = await chromium.use(stealth()).launchPersistentContext('/tmp/chromium-browser-cache', {
+        ...BROWSER_CONTEXT,
+        headless: false,
+    })
+    // const context = await browser
 
     const fetchFunctions = enabledAdapters
-        .map((adapter) => adapter.adapter.fetchAll(adapter.config, context)
+        .map((adapter) => adapter.adapter.fetchAll(adapter.config, browser)
             .then((apartments) => ({apartments, ...adapter}))
             .catch((ex) => {
                 logger.error(`Error fetching apartments from ${adapter.config.name}`)
@@ -29,7 +32,7 @@ const fetchAllApartments = async () => {
         }
     }
 
-    await context.close()
+    // await context.close()
     await browser.close()
     return results
 }

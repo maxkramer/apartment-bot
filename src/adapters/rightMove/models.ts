@@ -62,7 +62,7 @@ export interface LozengeModel {
     matchingLozenges: any[];
 }
 
-export interface Listing {
+export interface Models {
     id: number;
     bedrooms: number;
     bathrooms: number;

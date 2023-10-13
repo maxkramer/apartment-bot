@@ -1,4 +1,3 @@
-import randomUserAgent from "random-useragent";
 import Pino from 'pino'
 import path from 'path'
 import {code} from "currency-codes";
@@ -8,12 +7,12 @@ export const DATABASE_NAME = 'apartments.db'
 export const DEFAULT_CURRENCY_CODE = code('GBP')?.code || 'GBP'
 export const DEFAULT_PAGE_TIMEOUT = 2_000
 export const BROWSER_CONTEXT = {
-    userAgent: randomUserAgent.getRandom(),
-    locale: 'en_GB',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+    locale: 'de_DE',
     hasTouch: true,
     deviceScaleFactor: 2,
     isMobile: true,
-    timezoneId: 'GMT+1',
+    timezoneId: 'GMT+2',
     viewport: {
         width: 562,
         height: 1218
