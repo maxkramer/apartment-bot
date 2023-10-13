@@ -8,6 +8,7 @@ import {BASE_URL} from "./constants";
 import Config from "../../types/config";
 import * as crypto from 'crypto'
 import * as fs from "fs";
+import fetch from 'node-fetch'
 
 const imageUrlSeparator = '/ORIG/'
 const parseImageUrl = (listing: ResultlistEntry2) => {
@@ -77,7 +78,9 @@ const runSearch = async (config: Config, page: Page): Promise<Array<ResultlistEn
         .then((response) => {
             const filePath = `/tmp/${crypto.createHash('sha1').update(url).digest('hex')}.html`
             logger.info(`Writing response to ${filePath}`)
-            fs.writeFileSync(filePath, response.browserHtml)
+
+            const parsedResponse = response as { browserHtml: string }
+            fs.writeFileSync(filePath, parsedResponse.browserHtml)
             logger.info(`Going to ${filePath}`)
             return page.goto(`file://${filePath}`)
         })
