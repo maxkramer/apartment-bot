@@ -13,7 +13,7 @@ const fetchAllApartments = async () => {
     const results = []
     const browser = await chromium.use(stealth()).launchPersistentContext('/tmp/chromium-browser-cache', {
         ...BROWSER_CONTEXT,
-        headless: false,
+        headless: true,
     })
 
     const fetchFunctions = enabledAdapters
