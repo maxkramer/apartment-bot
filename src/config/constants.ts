@@ -26,7 +26,7 @@ export const logger = Pino({
     transport: {
         target: 'pino-pretty',
         options: process.env.NODE_ENV === 'production' ? {
-            destination: path.resolve(__dirname + '/cron-job.log'),
+            destination: path.resolve('/var/log/apartment-bot/cron-job.log'),
             colorize: true,
             translateTime: "yyyy-mm-dd h:MM:ss TT Z",
         } : undefined,

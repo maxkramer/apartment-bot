@@ -1,4 +1,5 @@
 all:
+	mkdir -p /var/log/apartment-bot
 	nohup npm run start > /dev/null 2>&1 &
 
 tail:
