@@ -37,8 +37,6 @@ const fetchAllApartments = async () => {
 }
 
 const main = async () => {
-    logger.info('Starting job')
-
     const dataSource = await AppDataSource.initialize()
     const apartmentRepository = dataSource.getRepository(Apartment)
 
@@ -75,14 +73,22 @@ const main = async () => {
     }
 
     await dataSource.destroy()
-    logger.info("Completed job")
 }
 
-Cron(
+logger.info(`Started process. Running every ${JOB_CRONTAB}`)
+const job = Cron(
     JOB_CRONTAB,
     {
         catch: true,
         unref: false,
     },
-    main,
+    async () => {
+        logger.info('Starting job')
+        await main()
+        logger.info("Completed job")
+        logger.info(`Running next at ${job.nextRun()}`)
+    },
 )
+
+logger.info(`Running next at ${job.nextRun()}`)
+job.resume()
